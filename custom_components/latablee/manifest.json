@@ -1,0 +1,13 @@
+{
+  "domain": "latablee",
+  "name": "LaTablée",
+  "codeowners": ["@simpleace15"],
+  "config_flow": true,
+  "dependencies": ["conversation", "http", "todo", "calendar"],
+  "documentation": "https://github.com/simpleace15/latablee-ha",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/simpleace15/latablee-ha/issues",
+  "requirements": ["aiohttp>=3.9"],
+  "version": "2026.09.21"
+}

@@ -1,0 +1,61 @@
+# LaTablée custom sentences (Tier 2 — matched locally by the Assist pipeline).
+# Matched after HA's built-in intents (Tier 1: todo/calendar handle most list talk).
+language: en
+intents:
+  LaTableePlanMeal:
+    data:
+      - sentences:
+          - "add {meal} for {slot} {day}"
+          - "add {meal} for {slot}"
+          - "add {meal} {day}"
+          - "plan {meal} for {slot} {day}"
+          - "plan {meal} {day}"
+          - "put {meal} on the menu {day}"
+          - "{meal} for {slot} {day}"
+        slots:
+          slot: dinner
+      - sentences:
+          - "what's for {slot} {day}"
+          - "what is for {slot} {day}"
+          - "what's for {slot}"
+          - "what are we eating {day}"
+          - "what am I eating {day}"
+        slots:
+          slot: dinner
+    slots:
+      day: tonight
+      slot: dinner
+  LaTableeQueryPlan:
+    data:
+      - sentences:
+          - "what's for {slot} {day}"
+          - "what is for {slot} {day}"
+          - "what's for {slot}"
+          - "what are we eating {day}"
+          - "what's planned {day}"
+          - "what's the menu {day}"
+    slots:
+      day: tonight
+      slot: dinner
+lists:
+  slot:
+    values:
+      - in: breakfast
+      - in: lunch
+      - in: dinner
+        out: dinner
+      - in: supper
+        out: dinner
+  day:
+    values:
+      - in: tonight
+      - in: today
+        out: tonight
+      - in: tomorrow
+      - in: monday
+      - in: tuesday
+      - in: wednesday
+      - in: thursday
+      - in: friday
+      - in: saturday
+      - in: sunday

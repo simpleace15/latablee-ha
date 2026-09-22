@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "LaTablée",
+        "description": "Connect to your LaTablée instance. Create a token in LaTablée → Settings → Device tokens.",
+        "data": {
+          "url": "Instance URL",
+          "token": "API device token",
+          "verify_ssl": "Verify TLS certificate"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Couldn't reach that instance — check the URL.",
+      "invalid_auth": "Token rejected — check the device token."
+    },
+    "abort": {
+      "already_configured": "This instance is already set up."
+    }
+  }
+}

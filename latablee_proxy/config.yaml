@@ -1,0 +1,26 @@
+# LaTablée sidebar proxy — serves the hosted LaTablée web UI through HA ingress.
+name: LaTablée Proxy
+version: "2026.09.21"
+slug: latablee-proxy
+description: LaTablée meal planner in your Home Assistant sidebar
+url: https://github.com/simpleace15/latablee-ha
+arch:
+  - aarch64
+  - amd64
+  - armv7
+init: false
+ingress: true
+ingress_port: 8099
+panel_icon: mdi:silverware-fork-knife
+panel_title: LaTablée
+panel_admin: false
+stage: experimental
+startup: services
+options:
+  instance_url: ""
+  api_token: ""
+  verify_tls: true
+schema:
+  instance_url: str
+  api_token: password
+  verify_tls: bool

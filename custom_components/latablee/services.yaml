@@ -1,0 +1,76 @@
+# Services exposed by the LaTablée integration (developer docs for HA UI).
+add_to_list:
+  name: Add to list
+  description: Add an item to the household's active LaTablée shopping list.
+  fields:
+    item:
+      name: Item
+      description: What to add, e.g. "milk" or "2 cups flour"
+      required: true
+      example: "2 cups milk"
+      selector:
+        text:
+    quantity:
+      name: Quantity
+      description: Numeric quantity (optional — parsed from item text if omitted)
+      selector:
+        number:
+          min: 0
+          max: 10000
+    unit:
+      name: Unit
+      description: Unit (optional)
+      example: cups
+      selector:
+        text:
+
+plan_meal:
+  name: Plan meal
+  description: Put a meal on the LaTablée menu.
+  fields:
+    meal:
+      name: Meal
+      description: Meal name or recipe title
+      required: true
+      example: "tacos"
+      selector:
+        text:
+    date:
+      name: Date
+      description: Planned date (YYYY-MM-DD; words like "tonight" work in intents, not here)
+      required: true
+      example: "2026-09-22"
+      selector:
+        text:
+    slot:
+      name: Slot
+      description: breakfast / lunch / dinner
+      default: dinner
+      selector:
+        select:
+          options: [breakfast, lunch, dinner]
+
+query_plan:
+  name: Query plan
+  description: Fetch planned meals; results are emitted as an event 'latablee_plan_query_result'.
+  fields:
+    days:
+      name: Days
+      description: How many days ahead to fetch
+      default: 7
+      selector:
+        number:
+          min: 1
+          max: 30
+
+voice_command:
+  name: Voice command
+  description: Send a freeform transcript to LaTablée's NLU; result emitted as 'latablee_voice_result'.
+  fields:
+    transcript:
+      name: Transcript
+      description: What was said, e.g. "refill my week"
+      required: true
+      example: "what's for dinner tonight"
+      selector:
+        text:
