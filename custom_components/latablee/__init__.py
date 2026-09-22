@@ -6,7 +6,7 @@ from typing import Any
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, ConfigFlow
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_URL, CONF_VERIFY_SSL
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -73,65 +73,3 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         conn: LaTableeConnection = hass.data[DOMAIN].pop(entry.entry_id)["conn"]
         await conn.close()
     return unload
-
-
-# --------------------------------------------------------------------------
-# Config flow (URL + token; discovery pre-fills both when add-on installed)
-# --------------------------------------------------------------------------
-class LaTableeConfigFlow(ConfigFlow, domain=DOMAIN):
-    """Handle the LaTablée config flow."""
-
-    VERSION = 1
-
-    async def async_step_user(self, user_input: dict[str, Any] | None = None):
-        errors: dict[str, str] = {}
-        suggested = {"url": "", "token": ""}
-
-        # Supervisor discovery: the add-on stores instance_url/api_token in its
-        # options; when the same Supervisor runs, pre-fill from its discovery info.
-        discovery = await self._async_discovery()
-        if discovery:
-            suggested = discovery
-
-        if user_input is not None:
-            url = user_input[CONF_URL].rstrip("/")
-            token = user_input[CONF_TOKEN]
-            verify = user_input.get(CONF_VERIFY_SSL, True)
-            conn = LaTableeConnection(url, token, verify, async_get_clientsession(self.hass))
-            try:
-                me = await conn.me()
-            except LaTableeError as err:
-                errors["base"] = "cannot_connect" if err.status is None else "invalid_auth"
-            else:
-                await conn.close()
-                await self.async_set_unique_id(f"latablee:{url}")
-                self._abort_if_unique_id_configured()
-                return self.async_create_entry(
-                    title=f"LaTablée ({me.get('name', 'user')})",
-                    data={CONF_URL: url, CONF_TOKEN: token, CONF_VERIFY_SSL: verify},
-                )
-
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema({
-                vol.Required(CONF_URL, default=suggested.get("url", "")): str,
-                vol.Required(CONF_TOKEN, default=suggested.get("token", "")): str,
-                vol.Required(CONF_VERIFY_SSL, default=True): bool,
-            }),
-            errors=errors,
-        )
-
-    async def async_step_discovery(self, discovery_info: dict[str, Any]):
-        """Pre-fill from the add-on's options via Supervisor discovery."""
-        await self._async_handle_discovery(discovery_info)
-        return await self.async_step_user()
-
-    async def _async_discovery(self) -> dict | None:
-        """Read discovery info pushed by the add-on (hassio discovery payload)."""
-        return getattr(self, "_discovery_info", None)
-
-    async def _async_handle_discovery(self, discovery_info: dict[str, Any]) -> None:
-        self._discovery_info = {
-            "url": discovery_info.get("url", ""),
-            "token": discovery_info.get("token", ""),
-        }
