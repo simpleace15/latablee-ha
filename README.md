@@ -38,8 +38,18 @@ One repo, two components (the Frigate pattern):
 
 ## Requirements
 
-- A reachable LaTablée instance (v0.4.1+, which provides device tokens).
-- HA 2024.6+ (for the modern `todo` + conversation agent APIs).
+- **LaTablée app, v0.4.1+**, reachable from HA over the network — this is the
+  [app repo](https://github.com/simpleace15/latablee); deploy it anywhere with
+  `docker compose up -d` (see its README prerequisites).
+- **A device token** from that instance — LaTablée → Settings → Device tokens →
+  name it (e.g. "Home Assistant") → copy the `lat_…` value once.
+- **Home Assistant 2024.6+** (for the modern `todo` + conversation agent APIs).
+- For the sidebar add-on: Home Assistant **OS or Supervised** (Supervisor).
+  For container/Docker-Core HA installs, skip the add-on and use the
+  integration alone (HACS) — it carries all the functionality.
+- AI features through the connector (freeform voice) additionally need the
+  app's LLM endpoint configured — Tier 1/2 voice (list + plan intents) works
+  without any LLM.
 
 ## License
 
