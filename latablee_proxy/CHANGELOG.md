@@ -1,6 +1,6 @@
 # Changelog for LaTablée Proxy
 
-## 2026.09.30.2 (2026-09-30)
+## 2026.09.30.7 (2026-09-30)
 
 ### Fixed
 - **Proxy never actually served**: Alpine's nginx puts `server{}` files in

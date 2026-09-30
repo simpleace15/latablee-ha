@@ -1,6 +1,6 @@
 # LaTablée sidebar proxy — serves the hosted LaTablée web UI through HA ingress.
 name: LaTablée Proxy
-version: "2026.09.30-r7"
+version: "2026.09.30.7"
 slug: latablee-proxy
 description: LaTablée meal planner in your Home Assistant sidebar
 url: https://github.com/simpleace15/latablee-ha
