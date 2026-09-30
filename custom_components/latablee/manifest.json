@@ -15,5 +15,5 @@
   "integration_type": "hub",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/simpleace15/latablee-ha/issues",
-  "version": "2026.09.30.7"
+  "version": "2026.09.30.8"
 }

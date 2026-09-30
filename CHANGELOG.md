@@ -1,6 +1,6 @@
 # Changelog for the LaTablée HA connector (add-on + integration, lockstep).
 
-## 2026.09.30.7 (2026-09-30)
+## 2026.09.30.8 (2026-09-30)
 
 ### Fixed
 - **Add-on wouldn't build**: `latablee_proxy` Dockerfile pinned base image

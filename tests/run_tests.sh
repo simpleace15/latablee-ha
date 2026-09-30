@@ -54,7 +54,8 @@ import json
 m = json.load(open("custom_components/latablee/manifest.json"))
 assert m["domain"] == "latablee"
 assert m["config_flow"] is True
-assert "aiohttp" in str(m["requirements"])
+# hassfest: aiohttp is an HA core dep — listing it in a custom manifest FAILS hassfest
+assert "requirements" not in m or "aiohttp" not in str(m["requirements"])
 print("  manifest.json ok")
 EOF
 [ $? -ne 0 ] && FAIL=1
