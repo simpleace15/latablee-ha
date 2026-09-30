@@ -1,5 +1,21 @@
 # Changelog for LaTablée Proxy
 
+## 2026.09.30.2 (2026-09-30)
+
+### Fixed
+- **Proxy never actually served**: Alpine's nginx puts `server{}` files in
+  `/etc/nginx/http.d/`, not `conf.d/` — the rendered config was written to a
+  directory that didn't exist (and the shipped template was never loaded).
+  Now renders into `http.d/`, removes stock `default.conf`, uses the image's
+  own main nginx.conf.
+
+### Added
+- **Startup self-diagnostics** in the add-on log: it probes
+  `GET /api/health` (DNS/TLS/routing leg) and the device token via
+  `GET /api/v1/auth/me`, then prints exactly which leg failed and how to
+  fix it (bad URL vs unreachable app vs TLS vs invalid token). Run
+  once at startup; look for the `DIAG` lines in the Supervisor log.
+
 ## 2026.09.30 (2026-09-30)
 
 ### Fixed

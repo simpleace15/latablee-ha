@@ -6,7 +6,6 @@ FROM ${BUILD_FROM}
 RUN apk add --no-cache nginx jq
 
 COPY run.sh /run.sh
-COPY nginx.conf /etc/nginx/latablee.conf
 RUN chmod a+x /run.sh
 
 LABEL \
