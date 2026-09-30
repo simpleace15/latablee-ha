@@ -23,7 +23,8 @@ fi
 
 # Render config: static assets + API go upstream; everything else → upstream too
 # (LaTablée is a SPA — the nginx on the other side handles the index.html fallback).
-cat > /etc/nginx/conf.d/latablee.conf <<EOF
+mkdir -p /etc/nginx/http.d
+cat > /etc/nginx/http.d/latablee.conf <<EOF
 server {
     listen 8099;
     server_name _;
@@ -44,9 +45,9 @@ EOF
 
 # upstream TLS verification for self-signed certs
 if [ "$VERIFY_TLS" != "true" ]; then
-    echo "proxy_ssl_verify off;" > /etc/nginx/conf.d/latablee-verify.conf
+    echo "proxy_ssl_verify off;" > /etc/nginx/http.d/latablee-verify.conf.disabled
 else
-    echo "" > /etc/nginx/conf.d/latablee-verify.conf
+    echo "" > /etc/nginx/http.d/latablee-verify.conf.disabled
 fi
 
 # drop the copied template — only the rendered one should load
