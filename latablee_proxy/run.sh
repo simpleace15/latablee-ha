@@ -23,6 +23,7 @@ probe() {
     # $1 = description, $2 = curl args...
     local desc="$1"; shift
     local out rc body http_code
+    PROBE_HTTP="none"
     out=$(curl -sS -m 8 -w '\n%{http_code}' "$@" 2>&1) && rc=0 || rc=$?
     http_code=$(echo "$out" | tail -n1)
     body=$(echo "$out" | head -n -1 | head -c 200)
@@ -30,6 +31,15 @@ probe() {
         echo "DIAG OK   : ${desc} (200)"
         return 0
     fi
+    if [ "$rc" -eq 28 ]; then
+        # Timeout ≠ token failure: a rejected token answers instantly with 401.
+        # A hang usually means the backend was busy at check time (restart race,
+        # cold-start migration, cron backup) — nginx still starts fine below.
+        echo "DIAG WARN : ${desc} — timed out after 8s with no response"
+        echo "            -> backend slow or busy at check time (restart race? startup migration? backup?); not a token problem"
+        return 0
+    fi
+    PROBE_HTTP="$http_code"
     echo "DIAG FAIL : ${desc} (curl_rc=${rc} http=${http_code:-none})"
     case "$out" in *curl*6*) echo "            -> could not resolve/connect: check the URL and that the instance is reachable from HA";; esac
     case "$out" in *SSL*) echo "            -> TLS problem: wrong cert or self-signed (try toggle 'Verify TLS' off or fix the cert)";; esac
@@ -42,9 +52,14 @@ echo "--- LaTablee proxy diagnostics ---"
 if probe "instance reachable (${INSTANCE_URL}/api/health)" "${INSTANCE_URL}/api/health"; then
     # leg 2: is the device token valid? (only if one was configured)
     if [ -n "$API_TOKEN" ]; then
-        probe "device token valid (/api/v1/auth/me)" -H "Authorization: Bearer ${API_TOKEN}" \
-            "${INSTANCE_URL}/api/v1/auth/me" \
-        || echo "            -> mint a fresh token: LaTablee → Settings → Device tokens"
+        if ! probe "device token valid (/api/v1/auth/me)" -H "Authorization: Bearer ${API_TOKEN}" \
+            "${INSTANCE_URL}/api/v1/auth/me"; then
+            if [ "$PROBE_HTTP" = "401" ]; then
+                echo "            -> token rejected: mint a fresh one, LaTablee → Settings → Device tokens"
+            else
+                echo "            -> unexpected response (${PROBE_HTTP}): check the instance URL and app logs"
+            fi
+        fi
     else
         echo "DIAG WARN : no api_token configured — the integration and voice will not work until one is set"
     fi

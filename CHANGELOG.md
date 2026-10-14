@@ -1,5 +1,15 @@
 # Changelog for the LaTablée HA connector (add-on + integration, lockstep).
 
+## 2026.09.30.9 (2026-10-14)
+
+### Fixed
+- **Startup diagnostics misreported backend timeouts as token failures**: a curl
+  timeout (`rc=28`, no response in 8s) on the token check now logs `DIAG WARN`
+  — backend busy at check time (restart race, cold-start migration, cron backup) —
+  instead of `DIAG FAIL` plus a misleading "mint a fresh token" hint. The mint
+  hint now appears only on a real token rejection (HTTP 401); other unexpected
+  responses get their own note.
+
 ## 2026.09.30.8 (2026-09-30)
 
 ### Fixed

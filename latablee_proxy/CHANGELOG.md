@@ -1,5 +1,12 @@
 # Changelog for LaTablée Proxy
 
+## 2026.09.30.9 (2026-10-14)
+
+### Fixed
+- Diagnostics: curl timeout (rc=28) on any probe leg now logs `DIAG WARN` with
+  "backend busy at check time" guidance instead of `DIAG FAIL`; the "mint a
+  fresh token" hint only fires on a 401 rejection of `/api/v1/auth/me`.
+
 ## 2026.09.30.8 (2026-09-30)
 
 ### Fixed
