@@ -111,6 +111,11 @@ server {
     sub_filter '"/api/' '"\$ingress_prefix/api/';
     sub_filter "'/_next/" "'\$ingress_prefix/_next/";
     sub_filter "'/api/" "'\$ingress_prefix/api/";
+    # Redirects: a 307 Location can't carry the ingress prefix, and the browser
+    # resolves a relative Location against the HA host root — where HA core
+    # answers, not this add-on — so the panel goes blank. Rewrite Location
+    # headers to live under the ingress prefix too (only when proxying ingress).
+    proxy_redirect ~^(/.*)$ \$ingress_prefix\$1;
 
     location / {
         error_page 418 = @ingress;

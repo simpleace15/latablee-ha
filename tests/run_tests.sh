@@ -47,6 +47,12 @@ grep -q 'apk add --no-cache nginx jq' latablee_proxy/Dockerfile || { echo "FAIL:
 echo "== run.sh checks =="
 grep -q 'jq -r' latablee_proxy/run.sh || { echo "FAIL: must use jq (not bashio) for options"; FAIL=1; }
 grep -q 'daemon off;' latablee_proxy/run.sh || { echo "FAIL: nginx must run foreground"; FAIL=1; }
+# ingress correctness: proxy must rewrite upstream redirects into the ingress
+# prefix, else a 307 Location sends the iframe to the HA host root (blank panel)
+grep -q 'proxy_redirect' latablee_proxy/run.sh || { echo "FAIL: proxy_redirect missing — redirecting backends blank the HA panel"; FAIL=1; }
+grep -q 'error_page 418 = @ingress' latablee_proxy/run.sh || { echo "FAIL: ingress 418 dispatch missing"; FAIL=1; }
+grep -q 'proxy_cookie_path' latablee_proxy/run.sh || { echo "FAIL: cookie path scoping missing"; FAIL=1; }
+grep -q 'include /etc/nginx/http.d' latablee_proxy/nginx.conf || { echo "FAIL: nginx.conf must include http.d (Alpine layout)"; FAIL=1; }
 
 echo "== Integration manifest sanity =="
 python3 - <<'EOF'

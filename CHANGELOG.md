@@ -1,5 +1,16 @@
 # Changelog for the LaTablée HA connector (add-on + integration, lockstep).
 
+## 2026.11.02.1 (2026-11-02)
+
+### Fixed
+- **Sidebar panel stayed blank when the backend answered `/` with a redirect.**
+  LaTablée ≤0.7.4 redirected `/` → `/static/index.html` (307). Browsers resolve a
+  relative `Location` against the *HA host root*, where HA core answers — not this
+  add-on — so the panel never loaded. The proxy now rewrites upstream `Location`
+  headers into the ingress prefix via `proxy_redirect ~^(/.*)$ $ingress_prefix$1`,
+  so even a redirecting backend lands the iframe back inside `/api/hassio_ingress/<token>/`.
+  (LaTablée ≥0.7.5 serves `/` directly with 200, making this defense-in-depth.)
+
 ## 2026.09.30.9 (2026-10-14)
 
 ### Fixed

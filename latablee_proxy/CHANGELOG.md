@@ -1,5 +1,14 @@
 # Changelog for LaTablée Proxy
 
+## 2026.11.02.1 (2026-11-02)
+
+### Fixed
+- Blank sidebar behind HA ingress when the upstream app answers `/` with a
+  redirect (LaTablée ≤0.7.4 did 307 → /static/index.html): the browser resolved
+  the relative `Location` against the HA host root (HA core, not the add-on).
+  Added `proxy_redirect ~^(/.*)$ $ingress_prefix$1` so `Location` headers are
+  rewritten under the ingress prefix whenever `X-Ingress-Path` is present.
+
 ## 2026.09.30.9 (2026-10-14)
 
 ### Fixed
